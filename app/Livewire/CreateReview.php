@@ -72,7 +72,7 @@ class CreateReview extends Component implements HasForms
                             ->label('No WA')
                             ->required(),
                             Select::make('service_id')
-                            ->label('No WA')
+                            ->label('Layanan yang diterima')
                             ->required()
                            ->afterStateUpdated(function($state){
                             $this->test=$state;
