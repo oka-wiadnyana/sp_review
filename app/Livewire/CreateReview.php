@@ -62,7 +62,7 @@ class CreateReview extends Component implements HasForms
 
     public function getPdf(){
         $pdf=Service::where('id',$this->service_id)->first();
-        return $pdf->file;
+        return $pdf?->file;
     }
     
     public function form(Form $form): Form
