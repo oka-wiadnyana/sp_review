@@ -22,6 +22,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
+use PhpParser\Node\Expr\FuncCall;
 
 class CreateReview extends Component implements HasForms
 {
@@ -31,13 +32,15 @@ class CreateReview extends Component implements HasForms
     // public $name;
     // public $phone_number;
     // public $service_id;
-    public $test;
+    public $service_id;
 
     public function mount(): void
     {
         $this->form->fill();
         
     }
+
+
 
     public function getOptionService(){
         $services=Service::all()->toArray();
@@ -55,6 +58,11 @@ class CreateReview extends Component implements HasForms
 
         return $options;
         
+    }
+
+    public function getPdf(){
+        $pdf=Service::where('id',$this->service_id)->first();
+        return $pdf->file;
     }
     
     public function form(Form $form): Form
@@ -75,7 +83,7 @@ class CreateReview extends Component implements HasForms
                             ->label('Layanan yang diterima')
                             ->required()
                            ->afterStateUpdated(function($state){
-                            $this->test=$state;
+                            $this->service_id=$state;
                           
                            })
                             ->options($this->getOptionService()),
