@@ -35,7 +35,7 @@ class ReferenceController extends Controller
             [
                 'service_unit'=>'required',
                 'service_name'=>'required',
-                'file'=>'required_with:old_file|mimes:pdf',
+                'file'=>'required|mimes:pdf',
             ]
             );
 
@@ -91,7 +91,47 @@ class ReferenceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate=Validator::make(
+            $request->all(),
+            [
+                'service_unit'=>'required',
+                'service_name'=>'required',
+                'file'=>'mimes:pdf',
+            ]
+            );
+
+            // return response($request->all(),200);
+
+            if($validate->fails()){
+                return response('Isi semua field update',200);
+            }
+
+            
+            $file=$request->file('file');
+            if($request->has('file')&&$file->isValid()){
+
+                $file_name='Standar-Pelayanan-'.$request->service_unit.'-'.time().'.'.$file->getClientOriginalExtension();
+                $file->storeAs('sp',$file_name,'real_public');
+            }else {
+                $file_name=$request->old_file;
+            }
+
+
+        
+            try{
+                Service::where('id',$id)->update([
+                    'service_unit'=>$request->service_unit,
+                    'service_name'=>$request->service_name,
+                    'file'=>$file_name,
+                ]);
+
+                return response('Update success',200);
+            }catch(Exception $e){
+
+                return response($e->getMessage(),200);
+            }
+           
+
     }
 
     /**
@@ -99,6 +139,8 @@ class ReferenceController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Service::destroy($id);
+        return response()->json(['Delete success'],200);
+
     }
 }
